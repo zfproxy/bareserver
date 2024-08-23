@@ -152,7 +152,7 @@ func v3WSHandler(request *bare.BareRequest, clientConn *websocket.Conn, options 
 		return errors.New("the first WebSocket message was not a text frame")
 	}
 
-	var connectPacket bare.SocketClientToServer
+	var connectPacket SocketClientToServer
 	if err := json.Unmarshal(message, &connectPacket); err != nil {
 		return fmt.Errorf("error unmarshalling client connection packet: %w", err)
 	}
@@ -169,7 +169,7 @@ func v3WSHandler(request *bare.BareRequest, clientConn *websocket.Conn, options 
 	}
 	defer remoteSocket.Close()
 
-	openPacket := bare.SocketServerToClient{
+	openPacket := SocketServerToClient{
 		Type:       "open",
 		Protocol:   remoteSocket.Subprotocol(),
 		SetCookies: httpReq.Header["Set-Cookie"],

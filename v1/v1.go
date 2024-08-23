@@ -17,15 +17,6 @@ import (
 	"github.com/zfproxy/bareserver/bare"
 )
 
-type MetaV1 struct {
-	V        int             `json:"v"`
-	Response *MetaV1Response `json:"response,omitempty"`
-}
-
-type MetaV1Response struct {
-	Headers http.Header `json:"headers"`
-}
-
 var forbiddenSendHeaders = []string{"connection", "content-length", "transfer-encoding"}
 var forbiddenForwardHeaders = []string{"connection", "transfer-encoding", "origin", "referer"}
 

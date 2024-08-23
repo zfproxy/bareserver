@@ -17,20 +17,6 @@ import (
 	"github.com/zfproxy/bareserver/bare"
 )
 
-type MetaV2 struct {
-	V              int             `json:"v"`
-	Response       *MetaV2Response `json:"response,omitempty"`
-	SendHeaders    http.Header     `json:"sendHeaders"`
-	Remote         string          `json:"remote"`
-	ForwardHeaders []string        `json:"forwardHeaders"`
-}
-
-type MetaV2Response struct {
-	Status     int         `json:"status"`
-	StatusText string      `json:"statusText"`
-	Headers    http.Header `json:"headers"`
-}
-
 var nullBodyStatus = []int{101, 204, 205, 304}
 var forbiddenSendHeaders = []string{"connection", "content-length", "transfer-encoding"}
 var forbiddenForwardHeaders = []string{"connection", "transfer-encoding", "host", "origin", "referer"}
