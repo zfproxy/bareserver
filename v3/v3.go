@@ -248,7 +248,7 @@ func v3Handler(request *bare.BareRequest, w http.ResponseWriter, options *bare.O
 	if err != nil {
 		return nil, err
 	}
-	defer response.Body.Close()
+	// defer response.Body.Close()
 
 	responseHeaders := make(http.Header)
 
@@ -274,7 +274,7 @@ func v3Handler(request *bare.BareRequest, w http.ResponseWriter, options *bare.O
 		responseHeaders.Set("x-bare-headers", string(headersJSON))
 	}
 
-	responseBody := io.Reader(response.Body)
+	responseBody := io.ReadCloser(response.Body)
 	if !bare.ContainsInt(nullBodyStatus, status) {
 		responseBody = response.Body
 	}

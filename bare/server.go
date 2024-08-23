@@ -75,18 +75,20 @@ type Response struct {
 	StatusCode int
 	Status     string
 	Headers    http.Header
-	Body       io.Reader
+	Body       io.ReadCloser
 }
 
-func (r *Response) Write(w http.ResponseWriter) error {
+func (r *Response) Write(w http.ResponseWriter) (err error) {
 	for key, values := range r.Headers {
 		for _, value := range values {
 			w.Header().Add(key, value)
 		}
 	}
+
+	defer r.Body.Close()
 	w.WriteHeader(r.StatusCode)
 	if r.Body != nil {
-		_, err := io.Copy(w, r.Body)
+		_, err = io.Copy(w, r.Body)
 		return err
 	}
 	return nil
@@ -167,7 +169,7 @@ func NewBareServer(directory string, options *Options) *BareServer {
 				KeepAlive: 30 * time.Second,
 				DualStack: true,
 			}).DialContext,
-			ForceAttemptHTTP2:     true,
+			// ForceAttemptHTTP2:     true,
 			MaxIdleConns:          100,
 			IdleConnTimeout:       90 * time.Second,
 			TLSHandshakeTimeout:   10 * time.Second,
@@ -186,7 +188,7 @@ func NewBareServer(directory string, options *Options) *BareServer {
 				KeepAlive: 30 * time.Second,
 				DualStack: true,
 			}).DialContext,
-			ForceAttemptHTTP2:     true,
+			// ForceAttemptHTTP2:     true,
 			MaxIdleConns:          100,
 			IdleConnTimeout:       90 * time.Second,
 			TLSHandshakeTimeout:   10 * time.Second,
@@ -222,7 +224,7 @@ func (s *BareServer) DB() *JSONDatabaseAdapter {
 }
 
 func (s *BareServer) Register(version string) {
-	s.versions = append(s.versions, "v1")
+	s.versions = append(s.versions, version)
 }
 
 func (s *BareServer) ShouldRoute(request *http.Request) bool {
@@ -306,7 +308,7 @@ func (s *BareServer) RouteRequest(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *BareServer) getInstanceInfo() io.Reader {
+func (s *BareServer) getInstanceInfo() io.ReadCloser {
 	var memStats runtime.MemStats
 	runtime.ReadMemStats(&memStats)
 
@@ -328,7 +330,7 @@ func (s *BareServer) getInstanceInfo() io.Reader {
 		panic(err)
 	}
 
-	return bytes.NewReader(jsonData)
+	return io.NopCloser(bytes.NewReader(jsonData))
 }
 
 func (s *BareServer) Handle(pattern string, handler RouteCallback) {

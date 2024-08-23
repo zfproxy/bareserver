@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -113,11 +114,11 @@ func readHeaders(request *bare.BareRequest) (map[string]interface{}, error) {
 		forwardHeaders[i] = strings.ToLower(header)
 	}
 
-	for _, header := range forbiddenForwardHeaders {
-		if bare.Contains(forwardHeaders, header) {
-			return nil, &bare.BareError{Status: 400, Code: "FORBIDDEN_BARE_HEADER", ID: "request.headers.x-bare-forward-headers", Message: "A forbidden header was passed.", Stack: ""}
-		}
-	}
+	// for _, header := range forbiddenForwardHeaders {
+	// 	if bare.Contains(forwardHeaders, header) {
+	// 		return nil, &bare.BareError{Status: 400, Code: "FORBIDDEN_BARE_HEADER", ID: "request.headers.x-bare-forward-headers", Message: "A forbidden header was passed.", Stack: ""}
+	// 	}
+	// }
 
 	loadForwardedHeaders(forwardHeaders, headers, request)
 
@@ -154,7 +155,7 @@ func v1Handler(request *bare.BareRequest, w http.ResponseWriter, options *bare.O
 	if err != nil {
 		return nil, err
 	}
-	defer response.Body.Close()
+	// defer response.Body.Close()
 
 	responseHeaders := make(http.Header)
 
@@ -214,7 +215,7 @@ func v1WSMetaHandler(request *bare.BareRequest, w http.ResponseWriter, options *
 	return &bare.Response{
 		StatusCode: http.StatusOK,
 		Headers:    make(http.Header),
-		Body:       bytes.NewReader([]byte(`{"headers":` + meta + `}`)),
+		Body:       io.NopCloser(bytes.NewReader([]byte(`{"headers":` + meta + `}`))),
 	}, nil
 }
 
@@ -230,7 +231,7 @@ func v1WSNewMetaHandler(request *bare.BareRequest, w http.ResponseWriter, option
 
 	return &bare.Response{
 		StatusCode: http.StatusOK,
-		Body:       bytes.NewReader([]byte(id)),
+		Body:       io.NopCloser(bytes.NewReader([]byte(id))),
 	}, nil
 }
 

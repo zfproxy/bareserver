@@ -76,10 +76,10 @@ func main() {
 		},
 	}
 
-	rootCmd.Flags().StringVarP(&directory, "directory", "d", "/ov/", "Bare directory")
+	rootCmd.Flags().StringVarP(&directory, "directory", "d", "/ov", "Bare directory")
 	rootCmd.Flags().StringVarP(&host, "host", "o", "0.0.0.0", "Listening host")
-	rootCmd.Flags().IntVarP(&port, "port", "p", 8081, "Listening port")
-	rootCmd.Flags().BoolVarP(&errors, "errors", "e", false, "Error logging")
+	rootCmd.Flags().IntVarP(&port, "port", "p", 8080, "Listening port")
+	rootCmd.Flags().BoolVarP(&errors, "errors", "e", true, "Error logging")
 	rootCmd.Flags().StringVarP(&localAddress, "local-address", "a", "", "Address/network interface")
 	rootCmd.Flags().IntVarP(&family, "family", "f", 0, "IP address family used when looking up host/hostnames. Default is 0 (both IPv4 and IPv6)")
 	rootCmd.Flags().StringVarP(&maintainer, "maintainer", "m", "", "Inline maintainer data (JSON)")

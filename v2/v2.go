@@ -197,7 +197,7 @@ func v2Handler(request *bare.BareRequest, w http.ResponseWriter, options *bare.O
 	if err != nil {
 		return nil, err
 	}
-	defer response.Body.Close()
+	// defer response.Body.Close()
 
 	responseHeaders := make(http.Header)
 	for _, header := range passHeaders {
@@ -222,7 +222,7 @@ func v2Handler(request *bare.BareRequest, w http.ResponseWriter, options *bare.O
 		responseHeaders.Set("x-bare-headers", string(headersJSON))
 	}
 
-	responseBody := io.Reader(nil)
+	responseBody := io.ReadCloser(nil)
 	if !bare.ContainsInt(nullBodyStatus, status) {
 		responseBody = response.Body
 	}
@@ -317,7 +317,7 @@ func v2NewMetaHandler(request *bare.BareRequest, w http.ResponseWriter, options 
 
 	return &bare.Response{
 		StatusCode: http.StatusOK,
-		Body:       bytes.NewReader([]byte(id)),
+		Body:       io.NopCloser(bytes.NewReader([]byte(id))),
 	}, nil
 }
 
