@@ -157,8 +157,9 @@ func v1Handler(request *bare.BareRequest, w http.ResponseWriter, options *bare.O
 			responseHeaders.Set("Content-Length", bare.FlattenHeader(values))
 		}
 	}
-
-	responseHeaders.Set("x-bare-headers", response.Header.Get("x-bare-headers"))
+	headersToPass := bare.MapHeadersFromArray(bare.RawHeaderNames(response.Header), response.Header)
+	rspBareHeaders, _ := json.Marshal(headersToPass)
+	responseHeaders.Set("x-bare-headers", string(rspBareHeaders))
 	responseHeaders.Set("x-bare-status", strconv.Itoa(response.StatusCode))
 	responseHeaders.Set("x-bare-status-text", response.Status)
 
