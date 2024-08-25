@@ -102,14 +102,12 @@ func readHeaders(request *bare.BareRequest) (map[string]interface{}, error) {
 	}
 
 	for i, header := range forwardHeaders {
+		// just ignore
+		if bare.Contains(forbiddenForwardHeaders, header) {
+			continue
+		}
 		forwardHeaders[i] = strings.ToLower(header)
 	}
-
-	// for _, header := range forbiddenForwardHeaders {
-	// 	if bare.Contains(forwardHeaders, header) {
-	// 		return nil, &bare.BareError{Status: 400, Code: "FORBIDDEN_BARE_HEADER", ID: "request.headers.x-bare-forward-headers", Message: "A forbidden header was passed.", Stack: ""}
-	// 	}
-	// }
 
 	loadForwardedHeaders(forwardHeaders, headers, request)
 
