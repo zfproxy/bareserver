@@ -253,7 +253,7 @@ func v3Handler(request *bare.BareRequest, w http.ResponseWriter, options *bare.O
 	responseHeaders := make(http.Header)
 
 	for _, header := range passHeaders {
-		if values := response.Header[header]; len(values) > 0 {
+		if values := response.Header.Values(header); len(values) > 0 {
 			responseHeaders.Set(header, bare.FlattenHeader(values))
 		}
 	}

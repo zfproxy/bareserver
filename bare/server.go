@@ -280,8 +280,10 @@ func (s *BareServer) RouteRequest(w http.ResponseWriter, r *http.Request) {
 			// 获取manifest信息
 			response = &Response{
 				StatusCode: http.StatusOK,
-				Headers:    make(http.Header),
-				Body:       s.getInstanceInfo(),
+				Headers: http.Header{
+					"Content-Type": []string{"application/json"},
+				},
+				Body: s.getInstanceInfo(),
 			}
 		} else if handler, ok := s.routes[service]; ok {
 			// 路由转发
