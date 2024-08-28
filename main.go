@@ -20,8 +20,8 @@ func main() {
 	var localAddress = ""
 	var family = 0
 	var maintainerFile = ""
-	var certFile = "/etc/nginx/cert/cert.pem"
-	var keyFile = "/etc/nginx/cert/key.pem"
+	var certFile = "/etc/nginx/cert/c.xbug.fun/cert.pem"
+	var keyFile = "/etc/nginx/cert/c.xbug.fun/key.pem"
 
 	var rootCmd = &cobra.Command{
 		Use:     "bare-server",

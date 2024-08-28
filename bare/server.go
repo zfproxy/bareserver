@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/rs/cors"
 )
 
 type BareError struct {
@@ -327,12 +328,25 @@ func (s *BareServer) Start() error {
 		}
 	})
 
+	// cors.Default() setup the middleware with default options being
+	// all origins accepted with simple methods (GET, POST). See
+	// documentation below for more options.
+	// handler := cors.Default().Handler(mux)
+	// 创建一个CORS处理器，允许所有源
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders: []string{"Accept", "Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization"},
+	})
+	// 将CORS处理器与mux路由器组合起来
+	handler := c.Handler(mux)
+
 	// Define HTTP and HTTPS servers
 	var httpServer *http.Server
 	if len(s.options.AddrHttp) >= 3 {
 		httpServer = &http.Server{
 			Addr:         s.options.AddrHttp,
-			Handler:      mux,
+			Handler:      handler,
 			ReadTimeout:  10 * time.Second,
 			WriteTimeout: 10 * time.Second,
 		}
@@ -350,7 +364,7 @@ func (s *BareServer) Start() error {
 	if len(s.options.AddrHttps) >= 3 {
 		httpsServer = &http.Server{
 			Addr:         s.options.AddrHttps,
-			Handler:      mux,
+			Handler:      handler,
 			ReadTimeout:  10 * time.Second,
 			WriteTimeout: 10 * time.Second,
 			// Configure TLS settings
